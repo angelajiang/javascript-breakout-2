@@ -20,7 +20,7 @@ UPDATECOUNT = 0
 WRITECOUNT = 0
 PERIOD = 50000
 HITCOUNT=0
-GAMECOUNT=0
+GAMECOUNT=1
 #Tweakable parameters
 #table
 AVERAGESFILE = 'average_hits'
@@ -214,6 +214,8 @@ def get_move():
     elif (message == 'lose'):
         #Ball and paddle on same plane, just lost
         reward = BADREWARD
+        print 'LOSE!!!!\n'
+        GAMECOUNT+=1
     elif (message == 'win'):
         reward = WINREWARD
     elif (message == 'move'):
@@ -222,19 +224,19 @@ def get_move():
     updateQ(LASTSTATE, stateMaxQ, reward);
 
     #Periodically, write to new table
+    #print UPDATECOUNT
     if UPDATECOUNT > PERIOD:
-        filename = "table_" +  str(WRITECOUNT)
-        serialize(filename)
-        WRITECOUNT+=1
-    	avgHits = float(HITCOUNT/GAMECOUNT)
         UPDATECOUNT = 0
+        filename = "table_" +  str(WRITECOUNT)
+        #serialize(filename)
+        WRITECOUNT+=1
+        avgHits = float(HITCOUNT/GAMECOUNT)
         HITCOUNT = 0
-        GAMECOUNT = 0
+        GAMECOUNT = 1
         f = open(AVERAGESFILE, "a")
         s = str(WRITECOUNT*PERIOD) + ' ' + str(avgHits) + '\n'
         f.write(s)
         f.close()
-        UPDATECOUNT = 0
 
     #Get move for current state
     move = eGreedy(CURSTATE)
@@ -247,11 +249,13 @@ def get_move():
     else:
         return "left"
 
-@app.route('/serialize/<filename>')
+
+
+#@app.route('/serialize/<filename>')
 def serialize(filename):
     #Writes qtable to filename
     global QTABLE
-    frame = sys._getframe(0)
+    #frame = sys._getframe(0)
     print id(QTABLE)
     f = open(filename, 'w')
     pickle.dump(QTABLE, f)

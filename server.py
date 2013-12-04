@@ -18,7 +18,7 @@ CURSTATE = dict(paddleX=1, ballX=1, ballV=1, ballY=1, move=2)
 LASTSTATE = dict()
 UPDATECOUNT = 0
 WRITECOUNT = 0
-PERIOD = 100000
+PERIOD = 50000
 HITCOUNT=0
 GAMECOUNT=0
 #Tweakable parameters
@@ -194,6 +194,15 @@ def get_move():
     global HITCOUNT
     global GAMECOUNT
     global AVERAGESFILE
+
+    #Get current state
+    LASTSTATE = CURSTATE.copy()
+    message = str(request.values['msgName'])
+    wasHit = str(request.values['wasHit'])
+    CURSTATE['paddleX'] = int(request.values["paddleX"])
+    CURSTATE['ballX'] = int(request.values["ballX"])
+    CURSTATE['ballV'] = int(request.values["ballV"])
+    CURSTATE['ballY'] = int(request.values["ballY"])
 
 
     #Update last state

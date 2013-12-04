@@ -17,8 +17,8 @@ Breakout = {
         },
 
         court: {
-            xchunks: 30,
-            ychunks: 25
+            xchunks: 15,
+            ychunks: 15
         },
 
         ball: {
@@ -173,7 +173,7 @@ Breakout = {
 
         if (this.score.loseLife()){
             this.score.reset();
-            this.resetLevel(Math.round(Math.random()*Breakout.Levels.length));
+            //this.resetLevel(Math.round(Math.random()*Breakout.Levels.length));
             this.paddle.stopMovingLeft();
             this.paddle.stopMovingRight();
             this.ball.reset({launch: false, launchNow: true});

@@ -18,9 +18,12 @@ CURSTATE = dict(paddleX=1, ballX=1, ballV=1, ballY=1, move=2)
 LASTSTATE = dict()
 UPDATECOUNT = 0
 WRITECOUNT = 0
-PERIOD = 2000
+PERIOD = 100000
+HITCOUNT=0
+GAMECOUNT=0
 #Tweakable parameters
 #table
+AVERAGESFILE = 'average_hits'
 TABLEFILE = 'table'
 NUMACTIONS = 3
 MAXPADDLEX = 24 #0-24
@@ -188,6 +191,9 @@ def get_move():
     global UPDATECOUNT
     global PERIOD
     global WRITECOUNT
+    global HITCOUNT
+    global GAMECOUNT
+    global AVERAGESFILE
 
 
     #Update last state
@@ -195,6 +201,7 @@ def get_move():
     if (wasHit == 'true'):
         #Ball hit paddle
         reward = GOODREWARD
+        HITCOUNT += 1
     elif (message == 'lose'):
         #Ball and paddle on same plane, just lost
         reward = BADREWARD
@@ -210,6 +217,14 @@ def get_move():
         filename = "table_" +  str(WRITECOUNT)
         serialize(filename)
         WRITECOUNT+=1
+    	avgHits = float(HITCOUNT/GAMECOUNT)
+        UPDATECOUNT = 0
+        HITCOUNT = 0
+        GAMECOUNT = 0
+        f = open(AVERAGESFILE, "a")
+        s = str(WRITECOUNT*PERIOD) + ' ' + str(avgHits) + '\n'
+        f.write(s)
+        f.close()
         UPDATECOUNT = 0
 
     #Get move for current state
@@ -298,5 +313,5 @@ def disp(obj):
 
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, signal_handler)
-    app.debug = True
-    app.run()
+    #app.debug = True
+    app.run('127.0.0.1',5001)
